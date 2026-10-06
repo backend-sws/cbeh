@@ -1,0 +1,17 @@
+Charge Type,Charge Category,Code,Standard Charge,Description
+Pathology,CBC,CBC,300,Complete Blood Count Test
+Pathology,LFT,LFT,700,Liver Function Test
+Pathology,KFT/RFT,KFT,800,Kidney Function Test / RFT
+Pathology,CRP,CRP,450,C-Reactive Protein
+Pathology,VIRAL MARKER,VM,900,Viral Marker Screen
+Bed / Room Charges,ICU Bed,ICU Bed,2500,ICU Bed charges per 24 hours
+Bed / Room Charges,General Ward,General Ward,500,General Ward per day
+Bed / Room Charges,Private Room (AC),Private AC,1500,Private AC Room per day
+Doctor / Treatment Charges,Consultation,OPD Consult,500,Specialist Doctor Consultation
+Doctor / Treatment Charges,Nursing Care,Nursing Care,300,24 Hr Nursing & Monitoring
+Doctor / Treatment Charges,Emergency Care,Emergency STAT,800,Emergency Initial Assessment
+Tests / Medical Services,X-Ray,X-Ray Chest,400,Chest X-Ray PA View
+Tests / Medical Services,ECG,ECG,250,12-Lead Electrocardiogram
+Tests / Medical Services,Nebulization,Nebulization,150,Per session nebulization
+Tests / Medical Services,Central Line,Central Line,1200,Central Venous Line Insertion
+Tests / Medical Services,Blood Transfusion,Blood Transfusion,500,Whole Blood / PRBC Transfusion Charge

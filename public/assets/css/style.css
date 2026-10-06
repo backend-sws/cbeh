@@ -1,0 +1,63 @@
+:root {
+    --main-color: #924AEF; /* Base Purple */
+    --purple-color: #FF00B8; /* Base Pink */
+    
+    --main-light-color: rgba(146, 74, 239, 0.15); /* Light Purple */
+    --purple-light-color: rgba(255, 0, 184, 0.15); /* Light Pink */
+    
+    --main-hover-color: rgba(146, 74, 239, 0.25); /* Slightly Darker Purple */
+    --purple-hover-color: rgba(255, 0, 184, 0.25); /* Slightly Darker Pink */
+}
+
+/* Background Colors */
+.bg-main-color {
+    background-color: var(--main-color);
+}
+
+.bg-main-light {
+    background-color: var(--main-light-color);
+    border: 1px solid var(--main-color); /* Ensure visibility */
+}
+
+.bg-purple-light {
+    background-color: var(--purple-light-color);
+    border: 1px solid var(--purple-color);
+}
+
+.bg-purple-color {
+    border-color: var(--purple-color);
+    /* background-color: var(--purple-light-color); */
+}
+
+/* Text Colors */
+.text-main-color {
+    color: var(--purple-color);
+}
+.customborder{
+    /* border-color: var(--purple-color); */
+    border: 1px solid var(--purple-color);
+    /* border-radius: 10%; */
+}
+
+/* .border .border{
+    border-color: var(--purple-color);
+} */
+#D9D9D9
+/* Borders */
+.border-main-color {
+    border-color: var(--main-color);
+}
+
+/* Hover Effects */
+.hover-main-color:hover {
+    background-color: var(--main-hover-color);
+}
+
+.hover-purple-color:hover {
+    background-color: var(--purple-hover-color);
+}
+
+.hover-text-purple-color:hover {
+    color: var(--purple-color);
+    cursor: pointer;
+}

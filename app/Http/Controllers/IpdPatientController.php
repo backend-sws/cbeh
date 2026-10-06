@@ -449,6 +449,13 @@ class IpdPatientController extends Controller
                 ->take(100)
                 ->get();
 
+            $investigations = \App\Models\IpdInvestigation::where('ipd_patient_id', $ipd_patient->id)
+                ->with(['doctor', 'orderedBy'])
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $doctors = \App\Models\User::role('Doctor')->select('id', 'name', 'email')->get();
+
             return view('ipd.ipdpatient-detail', compact(
                 'ipd_patient',
                 'patient',
@@ -462,7 +469,9 @@ class IpdPatientController extends Controller
                 'active_medications',
                 'mar_date',
                 'mar_doses_today',
-                'mar_history'
+                'mar_history',
+                'investigations',
+                'doctors'
             ));
         } else {
             return redirect()->back();

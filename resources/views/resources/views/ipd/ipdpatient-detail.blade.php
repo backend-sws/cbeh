@@ -62,7 +62,7 @@
 
                 {{-- Tab Menu --}}
                 <ul class="flex flex-wrap space-x-6 border-b mb-4" id="tabs">
-                    @php $tabs = ['overview' => 'Overview', 'vitals' => 'Vitals Chart', 'medication_chart' => 'Ongoing Medication (MAR)', 'progress_notes' => 'Progress Notes', 'diagnosis' => 'Diagnosis Uploads',  'charges' => 'Bill Entry', 'prescriptions' => 'Prescriptions',  'payments' => 'Payments Receive', 'bills' => 'Bill Details']; @endphp
+                    @php $tabs = ['overview' => 'Overview', 'vitals' => 'Vitals Chart', 'medication_chart' => 'Ongoing Medication (MAR)', 'progress_notes' => 'Progress Notes', 'diagnosis' => 'Lab Uploads', 'investigations' => 'Diagnosis Investigation', 'charges' => 'Bill Entry', 'prescriptions' => 'Prescriptions',  'payments' => 'Payments Receive', 'bills' => 'Bill Details']; @endphp
                     @foreach ($tabs as $key => $label)
                         <li class="tab-item pb-2 border-b-2 cursor-pointer hover:border-blue-500 text-gray-700"
                             data-tab="{{ $key }}" id="tab-{{ $key }}">
@@ -349,7 +349,11 @@
                                 <img src="{{ $ipd_patient->doctor->image ? asset('avatar/' . $ipd_patient->doctor->image) : asset('img/doctor.png') }}"
                                     alt="Doctor Image" class="w-20 h-20 rounded-full border-2 border-teal-500">
                                 <div class="flex-1">
-                                    <p class="text-lg font-semibold text-gray-800">Dr. {{ $ipd_patient->doctor->name ?? 'N/A' }}</p>
+                                    @php
+                                        $rawOverviewDoc = $ipd_patient->doctor->name ?? '';
+                                        $cleanOverviewDoc = $rawOverviewDoc && $rawOverviewDoc !== 'N/A' ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawOverviewDoc)) : '';
+                                    @endphp
+                                    <p class="text-lg font-semibold text-gray-800">{{ $cleanOverviewDoc ? 'Dr. ' . $cleanOverviewDoc : ($ipd_patient->doctor->name ?? 'N/A') }}</p>
                                     <p class="text-gray-600 text-sm">{{ $ipd_patient->doctor->email ?? 'N/A' }}</p>
                                     <p class="text-gray-600 text-sm">{{ $ipd_patient->doctor->phone ?? 'N/A' }}</p>
                                 </div>
@@ -370,6 +374,8 @@
                                     @include('ipd.medication-chart-tab')
                                 @elseif ($key === 'progress_notes')
                                     @include('ipd.progress-notes')
+                                @elseif ($key === 'investigations')
+                                    @include('ipd.investigations-tab')
                                 @elseif ($key === 'prescriptions')
                                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                                         <div class="flex justify-between items-center mb-4">
@@ -399,7 +405,13 @@
                                                                 <td class="px-4 py-2">{{ $index + 1 }}</td>
                                                                 <td class="px-4 py-2">{{ $ipd_patient->ipd_no }}</td>
                                                                 <td class="px-4 py-2">{{ $ipd_patient->patient->name ?? '' }}</td>
-                                                                <td class="px-4 py-2">Dr. {{ $ipd_patient->doctor->name ?? '' }}</td>
+                                                                <td class="px-4 py-2">
+                                                                    @php
+                                                                        $rawPresDoc = $pres->doctor->name ?? ($ipd_patient->doctor->name ?? '');
+                                                                        $cleanPresDoc = $rawPresDoc ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawPresDoc)) : '';
+                                                                    @endphp
+                                                                    {{ $cleanPresDoc ? 'Dr. ' . $cleanPresDoc : '-' }}
+                                                                </td>
                                                                 <td class="px-4 py-2">
                                                                     {{ \Carbon\Carbon::parse($pres->created_at)->format('jS M, Y h:i A') }}
                                                                 </td>
@@ -773,7 +785,11 @@
                         </div>
                         <div>
                             <div class="text-xs text-gray-500">Doctor:</div>
-                            <div class="font-semibold text-gray-800" id="previewDoctorName">Dr. {{ $ipd_patient->doctor->name }}</div>
+                            @php
+                                $rawPreviewDoc = $ipd_patient->doctor->name ?? '';
+                                $cleanPreviewDoc = $rawPreviewDoc ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawPreviewDoc)) : '';
+                            @endphp
+                            <div class="font-semibold text-gray-800" id="previewDoctorName">{{ $cleanPreviewDoc ? 'Dr. ' . $cleanPreviewDoc : 'N/A' }}</div>
                         </div>
                         <div>
                             <div class="text-xs text-gray-500">Bed:</div>
@@ -843,7 +859,7 @@
                     <form id="diagnosisUploadForm" enctype="multipart/form-data">
                         @csrf
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Upload Diagnosis Report</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Upload Lab Report</h3>
 
                             <div class="space-y-4">
                                 <div>
@@ -925,7 +941,7 @@
 
                 // Set default active tab
 
-                // Diagnosis Uploads Tab Handler
+                // Lab Uploads Tab Handler
                 const tabDiag = document.getElementById('tab-diagnosis');
                 if (tabDiag) {
                     tabDiag.addEventListener('click', function() {
@@ -934,14 +950,14 @@
                             diagnosisContent.innerHTML = `
         <div class="bg-white p-6 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Diagnosis Uploads</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Lab Uploads</h3>
                 <button type="button" id="openDiagnosisModalBtn" 
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                    Upload New Report
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+                    <i class="fas fa-upload mr-1"></i> Upload New Report
                 </button>
             </div>
             <div id="diagnosisUploadsTableContainer">
-                <p class="text-gray-600">Loading diagnosis uploads...</p>
+                <p class="text-gray-600">Loading lab uploads...</p>
             </div>
         </div>
     `;
@@ -950,6 +966,17 @@
                         const ipdPatientId = {{ $ipd_patient->id }};
                         if (typeof fetchDiagnosisUploads === 'function') fetchDiagnosisUploads(ipdPatientId);
                         if (typeof setupDiagnosisModal === 'function') setupDiagnosisModal();
+                    });
+                }
+
+                // Diagnosis Investigation Tab Handler
+                const tabInv = document.getElementById('tab-investigations');
+                if (tabInv) {
+                    tabInv.addEventListener('click', function() {
+                        const ipdPatientId = {{ $ipd_patient->id }};
+                        if (typeof fetchInvestigations === 'function') {
+                            fetchInvestigations(ipdPatientId);
+                        }
                     });
                 }
                 @if (session('success') && (str_contains(session('success'), 'Prescription') || str_contains(session('success'), 'prescription')))
@@ -1108,12 +1135,15 @@
 
                                 data.forEach((prescription, idx) => {
                                     let createdDate = prescription.created_at ? new Date(prescription.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--';
+                                    let rawDoc = (prescription.doctor && prescription.doctor.name) ? prescription.doctor.name : '{{ addslashes($ipd_patient->doctor->name ?? "") }}';
+                                    let cleanDoc = rawDoc ? rawDoc.trim().replace(/^(dr\.?\s*)+/i, '') : '';
+                                    let displayDoc = cleanDoc ? ('Dr. ' + cleanDoc) : '-';
                                     tableHtml += `
                                         <tr>
                                             <td class="px-4 py-2">${idx + 1}</td>
                                             <td class="px-4 py-2">{{ $ipd_patient->ipd_no }}</td>
                                             <td class="px-4 py-2">${prescription.patient?.name ?? '{{ $ipd_patient->patient->name ?? "" }}'}</td>
-                                            <td class="px-4 py-2">${prescription.doctor?.name ? 'Dr. ' + prescription.doctor.name : 'Dr. {{ $ipd_patient->doctor->name ?? "" }}'}</td>
+                                            <td class="px-4 py-2">${displayDoc}</td>
                                             <td class="px-4 py-2">${createdDate}</td>
                                             <td class="px-4 py-2 text-center whitespace-nowrap">
                                                 <a href="{{ route('admin.prescription.print', '') }}/${prescription.id}?ipd_id={{ $ipd_patient->id }}" target="_blank" class="inline-flex items-center px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded shadow hover:bg-green-700 mr-1">
@@ -1424,7 +1454,9 @@
                                 }) : '--';
                             document.getElementById('previewIpdNo').innerText = "{{ $ipd_patient->ipd_no }}";
                             document.getElementById('previewPatientName').innerText = "{{ $ipd_patient->patient->name }}";
-                            document.getElementById('previewDoctorName').innerText = "Dr. {{ $ipd_patient->doctor->name }}";
+                            let rawPreviewDoc = (data.doctor && data.doctor.name) ? data.doctor.name : '{{ addslashes($ipd_patient->doctor->name ?? "") }}';
+                            let cleanPreviewDoc = rawPreviewDoc ? rawPreviewDoc.trim().replace(/^(dr\.?\s*)+/i, '') : '';
+                            document.getElementById('previewDoctorName').innerText = cleanPreviewDoc ? ('Dr. ' + cleanPreviewDoc) : 'N/A';
                             document.getElementById('previewBedName').innerText = "{{ $ipd_patient->beds->name ?? ($ipd_patient->bed->name ?? 'N/A') }}";
                             document.getElementById('previewBloodPressure').innerText = "{{ $ipd_patient->blood_pressure ?? ($ipd_patient->bp ?? 'N/A') }}";
                             document.getElementById('previewPulse').innerText = "{{ $ipd_patient->pulse ?? 'N/A' }}";
@@ -1947,7 +1979,7 @@
                             container.innerHTML = `
                     <div class="text-center py-8">
                         <i class="fas fa-file-medical text-gray-400 text-4xl mb-4"></i>
-                        <p class="text-gray-500">No diagnosis reports uploaded yet.</p>
+                        <p class="text-gray-500">No lab reports uploaded yet.</p>
                         <p class="text-gray-400 text-sm mt-2">Click "Upload New Report" to add the first one.</p>
                     </div>
                 `;

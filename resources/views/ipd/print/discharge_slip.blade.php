@@ -196,7 +196,11 @@
                         <td class="label">Admission Date</td> <td class="val">{{ $ipdPatient->admission_date ? date('d-m-Y', strtotime($ipdPatient->admission_date)) : '-' }}</td>
                     </tr>
                     <tr>
-                        <td class="label">Consultant</td> <td class="val">Dr. {{ strtoupper($ipdPatient->doctor->name ?? '-') }}</td>
+                        @php
+                            $rawDischargeDoc = $ipdPatient->doctor->name ?? '';
+                            $cleanDischargeDoc = ($rawDischargeDoc && $rawDischargeDoc !== '-') ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawDischargeDoc)) : '';
+                        @endphp
+                        <td class="label">Consultant</td> <td class="val">{{ $cleanDischargeDoc ? 'Dr. ' . strtoupper($cleanDischargeDoc) : '-' }}</td>
                         <td class="label">Discharge Time</td> <td class="val">
                             @php
                                 $dischargeDate = $ipdPatient->discharge && $ipdPatient->discharge->discharge_date ? $ipdPatient->discharge->discharge_date : $ipdPatient->discharge_date;

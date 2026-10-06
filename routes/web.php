@@ -42,6 +42,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\OpdProgressNoteController;
 use App\Http\Controllers\IpdVitalController;
 use App\Http\Controllers\OngoingMedicationController;
+use App\Http\Controllers\IpdInvestigationController;
 use App\Http\Controllers\Settings\HospitalWebSettingsController;
 
 Route::get('/', function () {
@@ -631,11 +632,18 @@ Route::prefix('admin')->middleware(['auth', 'verified', CheckPermission::class])
         Route::post('/save-settings', 'printUpdate')->name('update');
     });
 
-    // IPD Diagnosis Uploads Routes
+    // IPD Diagnosis Uploads / Lab Uploads Routes
     Route::get('/ipd/{ipdPatientId}/diagnosis-uploads', [IpdDiagnosisUploadController::class, 'index'])->name('admin.ipd.diagnosis_uploads.index');
     Route::post('/ipd/{ipdPatientId}/diagnosis-uploads', [IpdDiagnosisUploadController::class, 'store'])->name('admin.ipd.diagnosis_uploads.store');
     Route::delete('/ipd/diagnosis-uploads/{id}', [IpdDiagnosisUploadController::class, 'destroy'])->name('admin.ipd.diagnosis_uploads.destroy');
     Route::get('/ipd/diagnosis-uploads/{id}/download', [IpdDiagnosisUploadController::class, 'download'])->name('admin.ipd.diagnosis_uploads.download');
+
+    // IPD Diagnosis & Investigation Orders & Nursing Workflow Routes
+    Route::get('/ipd/{ipdPatientId}/investigations', [IpdInvestigationController::class, 'index'])->name('admin.ipd.investigations.index');
+    Route::post('/ipd/{ipdPatientId}/investigations', [IpdInvestigationController::class, 'store'])->name('admin.ipd.investigations.store');
+    Route::post('/ipd/investigations/{id}/update-status', [IpdInvestigationController::class, 'updateStatus'])->name('admin.ipd.investigations.update_status');
+    Route::delete('/ipd/investigations/{id}', [IpdInvestigationController::class, 'destroy'])->name('admin.ipd.investigations.destroy');
+    Route::get('/ipd/investigations/{id}', [IpdInvestigationController::class, 'show'])->name('admin.ipd.investigations.show');
 
     // IPD Progress Notes Routes
     Route::get('/ipd/{ipdPatientId}/progress-notes', [IpdProgressNoteController::class, 'index'])->name('admin.ipd.progress_notes.index');

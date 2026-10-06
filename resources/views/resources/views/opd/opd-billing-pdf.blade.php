@@ -244,7 +244,11 @@
                         </td>
                         <td style="text-align: left;">Consultation</td>
                         <td style="text-align: left;">
-                            Standard Consultation Fee (Dr. {{ $opd_patient->doctor->name ?? 'Consultant' }})
+                            @php
+                                $rawOpdDoc = $opd_patient->doctor->name ?? '';
+                                $cleanOpdDoc = ($rawOpdDoc && $rawOpdDoc !== 'Consultant') ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawOpdDoc)) : '';
+                            @endphp
+                            Standard Consultation Fee ({{ $cleanOpdDoc ? 'Dr. ' . $cleanOpdDoc : ($opd_patient->doctor->name ?? 'Consultant') }})
                         </td>
                         <td style="text-align: center;">{{ number_format($opd_patient->standard_charge, 2) }}</td>
                         <td style="text-align: center;">1</td>

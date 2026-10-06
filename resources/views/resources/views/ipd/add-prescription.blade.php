@@ -57,7 +57,11 @@
             </div>
             <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
                 <div class="text-sm font-medium text-purple-600">Doctor</div>
-                <div class="text-lg font-semibold text-gray-800">Dr. {{ $ipd->doctor->name }}</div>
+                @php
+                    $rawAddPresDoc = $ipd->doctor->name ?? '';
+                    $cleanAddPresDoc = $rawAddPresDoc ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawAddPresDoc)) : '';
+                @endphp
+                <div class="text-lg font-semibold text-gray-800">{{ $cleanAddPresDoc ? 'Dr. ' . $cleanAddPresDoc : 'N/A' }}</div>
             </div>
             <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
                 <div class="text-sm font-medium text-orange-600">IPD No</div>

@@ -194,7 +194,11 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-600">
-                                    <div>Dr. {{ $med->doctor->name ?? 'Attending Doctor' }}</div>
+                                    @php
+                                        $rawMedDoc = $med->doctor->name ?? '';
+                                        $cleanMedDoc = ($rawMedDoc && $rawMedDoc !== 'Attending Doctor') ? preg_replace('/^(dr\.?\s*)+/i', '', trim($rawMedDoc)) : '';
+                                    @endphp
+                                    <div>{{ $cleanMedDoc ? 'Dr. ' . $cleanMedDoc : ($med->doctor->name ?? 'Attending Doctor') }}</div>
                                     <div class="text-[10px] text-gray-400">{{ $med->created_at ? $med->created_at->format('d M, h:i A') : '' }}</div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">

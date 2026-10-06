@@ -98,4 +98,11 @@ class IpdPatient extends Model
         return $this->hasMany(\App\Models\IpdVital::class, 'ipd_patient_id')->orderByDesc('recorded_at');
     }
 
+    /**
+     * Diagnostic investigations prescribed during this IPD admission.
+     */
+    public function investigations()
+    {
+        return $this->hasMany(\App\Models\IpdInvestigation::class, 'ipd_patient_id')->orderByDesc('id');
+    }
 }

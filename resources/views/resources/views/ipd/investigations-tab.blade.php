@@ -8,7 +8,7 @@
                     <i class="fas fa-microscope text-lg"></i>
                 </span>
                 <div>
-                    <h3 class="text-xl font-bold text-gray-800">Diagnosis & Investigations</h3>
+                    <h3 class="text-xl font-bold text-gray-800">Investigations</h3>
                     <p class="text-xs text-gray-500">Doctor clinical diagnosis orders, diagnostic investigations & nursing sample collection workflow</p>
                 </div>
             </div>
@@ -58,7 +58,7 @@
     <div id="investigationsTableContainer">
         <div class="text-center py-10">
             <i class="fas fa-spinner fa-spin text-blue-500 text-3xl mb-3"></i>
-            <p class="text-gray-500 text-sm">Loading diagnosis investigations...</p>
+            <p class="text-gray-500 text-sm">Loading investigations...</p>
         </div>
     </div>
 </div>
@@ -72,7 +72,7 @@
         <div class="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-file-medical-alt text-xl"></i>
-                <h3 class="text-lg font-bold">Order Diagnosis & Investigations</h3>
+                <h3 class="text-lg font-bold">Order Investigations</h3>
             </div>
             <button type="button" onclick="closeAddInvestigationModal()" class="text-white hover:text-gray-200 text-xl font-bold">
                 &times;

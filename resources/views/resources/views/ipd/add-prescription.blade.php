@@ -112,7 +112,7 @@
                         <table class="min-w-full divide-y divide-gray-200" id="medicinesTable">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                    <th scope="col" class="hidden px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medicine</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dose</th>
                                     <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
@@ -125,7 +125,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="medicineRows">
                                 <tr id="medicineRow0">
-                                    <td class="px-3 py-2 whitespace-nowrap">
+                                    <td class="hidden px-3 py-2 whitespace-nowrap">
                                         <select class="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:ring-blue-500 ipdCategoryId"
                                             name="medicine_category_id[]" onchange="filterIpdRowMedicines(this)">
                                             <option value="">All</option>
@@ -183,6 +183,7 @@
                                             <option value="Q4H">Q4H (Every 4 Hours)</option>
                                             <option value="Q6H">Q6H (Every 6 Hours)</option>
                                             <option value="Q8H">Q8H (Every 8 Hours)</option>
+                                            <option value="Continuous Dose">Continuous Dose</option>
                                             <option value="STAT">STAT (Immediate Once)</option>
                                             <option value="SOS">SOS (As Needed)</option>
                                             <option value="HS">HS (At Bedtime)</option>
@@ -292,7 +293,7 @@
 
             const row = `
             <tr id="medicineRow${medicineRowCount}">
-                <td class="px-3 py-2 whitespace-nowrap">
+                <td class="hidden px-3 py-2 whitespace-nowrap">
                     <select class="w-full px-2 py-1.5 border border-gray-300 rounded-md text-xs focus:ring-blue-500 ipdCategoryId" 
                         name="medicine_category_id[]" onchange="filterIpdRowMedicines(this)">
                         <option value="">All</option>

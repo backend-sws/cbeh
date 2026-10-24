@@ -173,7 +173,7 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold 
-                                        {{ in_array($med->frequency, ['STAT', 'SOS']) ? 'bg-red-100 text-red-700' : 'bg-indigo-100 text-indigo-700' }}">
+                                        {{ in_array($med->frequency, ['STAT', 'SOS']) ? 'bg-red-100 text-red-700' : (str_contains(strtoupper($med->frequency), 'CONTINUOUS') ? 'bg-teal-100 text-teal-800' : 'bg-indigo-100 text-indigo-700') }}">
                                         {{ $med->frequency ?: 'OD' }}
                                     </span>
                                 </td>
@@ -764,6 +764,7 @@
                             <option value="Q4H">Q4H - Every 4 Hours (6 times/day)</option>
                             <option value="Q6H">Q6H - Every 6 Hours (4 times/day)</option>
                             <option value="Q8H">Q8H - Every 8 Hours (3 times/day)</option>
+                            <option value="Continuous Dose">Continuous Dose (Continuous Infusion / 24h)</option>
                             <option value="STAT">STAT - Single Immediate Dose</option>
                             <option value="SOS">SOS / PRN - As Needed (On Demand)</option>
                             <option value="HS">HS - At Bedtime (09:00 PM)</option>

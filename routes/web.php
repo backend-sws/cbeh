@@ -43,6 +43,7 @@ use App\Http\Controllers\OpdProgressNoteController;
 use App\Http\Controllers\IpdVitalController;
 use App\Http\Controllers\OngoingMedicationController;
 use App\Http\Controllers\IpdInvestigationController;
+use App\Http\Controllers\OpdInvestigationController;
 use App\Http\Controllers\Settings\HospitalWebSettingsController;
 
 Route::get('/', function () {
@@ -658,6 +659,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', CheckPermission::class])
     Route::post('/opd/progress-notes/{id}/addendum', [OpdProgressNoteController::class, 'addAddendum'])->name('admin.opd.progress_notes.addendum');
     Route::get('/opd/progress-notes/{id}/print', [OpdProgressNoteController::class, 'print'])->name('admin.opd.progress_notes.print');
     Route::delete('/opd/progress-notes/{id}', [OpdProgressNoteController::class, 'destroy'])->name('admin.opd.progress_notes.destroy');
+
+    // OPD Diagnosis & Investigation Orders & Nursing Workflow Routes
+    Route::get('/opd/{opdPatientId}/investigations', [OpdInvestigationController::class, 'index'])->name('admin.opd.investigations.index');
+    Route::post('/opd/{opdPatientId}/investigations', [OpdInvestigationController::class, 'store'])->name('admin.opd.investigations.store');
+    Route::post('/opd/investigations/{id}/update-status', [OpdInvestigationController::class, 'updateStatus'])->name('admin.opd.investigations.update_status');
+    Route::delete('/opd/investigations/{id}', [OpdInvestigationController::class, 'destroy'])->name('admin.opd.investigations.destroy');
+    Route::get('/opd/investigations/{id}', [OpdInvestigationController::class, 'show'])->name('admin.opd.investigations.show');
 
     // IPD Vitals Tracking & Chart Routes
     Route::get('/ipd/{ipdPatientId}/vitals', [IpdVitalController::class, 'index'])->name('admin.ipd.vitals.index');

@@ -147,11 +147,11 @@
                         </button>
                         <button data-tab="diagnosis"
                             class="tab-button px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                            <i class="fas fa-stethoscope mr-2"></i>Uploads Diagnosis
+                            <i class="fas fa-flask mr-2"></i>Lab Uploads
                         </button>
                         <button data-tab="diagnosis-tests"
                             class="tab-button px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                            <i class="fas fa-vials mr-2"></i>Diagnosis Tests
+                            <i class="fas fa-microscope mr-2"></i>Investigation
                         </button>
                         <button data-tab="prescriptions"
                             class="tab-button px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
@@ -540,11 +540,11 @@
                     <div id="diagnosis" class="tab-content hidden">
                         <div class="bg-white p-6 rounded-lg border border-gray-200">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-medium text-gray-700">Diagnosis Records</h3>
+                                <h3 class="text-lg font-medium text-gray-700">Lab Uploads</h3>
                                 <button
                                     class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none"
                                     onclick="document.getElementById('diagnosisModal').classList.remove('hidden')">
-                                    <i class="fas fa-plus mr-2"></i> Add Diagnosis
+                                    <i class="fas fa-upload mr-2"></i> Upload Lab Report
                                 </button>
                             </div>
                             @if (isset($diagnoses) && $diagnoses->count())
@@ -679,8 +679,7 @@
                                 style="max-height: 90vh; overflow: hidden;">
                                 <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl"
                                     onclick="document.getElementById('diagnosisModal').classList.add('hidden')">&times;</button>
-                                <h2 id="diagnosisModalTitle" class="text-base font-semibold mb-3 text-pink-600">Add
-                                    Diagnosis</h2>
+                                <h2 id="diagnosisModalTitle" class="text-base font-semibold mb-3 text-pink-600">Upload Lab Report</h2>
                                 <form id="diagnosisForm" action="{{ route('admin.diagnosis.store') }}" method="POST"
                                     enctype="multipart/form-data" class="overflow-y-auto" style="max-height: 70vh;">
                                     @csrf
@@ -734,546 +733,10 @@
                         </div>
                     </div>
 
-                    <!-- Diagnosis Tests Tab -->
-                    <!-- Diagnosis Tests Tab -->
+                    <!-- Investigation Tab -->
                     <div id="diagnosis-tests" class="tab-content hidden">
-                        <div class="bg-white p-6 rounded-lg border border-gray-200">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-medium text-gray-700">Diagnosis Tests</h3>
-                                <button
-                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700"
-                                    onclick="openDiagnosisTestModal()">+ Add Diagnosis Tests</button>
-                            </div>
-                            <div id="diagnosisTestTableWrap">
-                                @if (isset($diagnosis_tests) && $diagnosis_tests->count())
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                            <thead>
-                                                <tr class="bg-gray-50">
-                                                    <th class="px-4 py-2">Patient Name</th>
-                                                    <th class="px-4 py-2">Doctor Name</th>
-                                                    <th class="px-4 py-2">Total Tests</th>
-                                                    <th class="px-4 py-2">Date</th>
-                                                    <th class="px-4 py-2 text-center">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-100">
-                                                @forelse ($diagnosis_tests_groups as $group_no => $tests)
-                                                    <tr>
-                                                        <td class="px-4 py-2">{{ $opd_patient->patient->name ?? '' }}</td>
-                                                        <td class="px-4 py-2">{{ $opd_patient->doctor->name ?? '' }}</td>
-                                                        <td class="px-4 py-2">{{ $tests->count() }}</td>
-                                                        <td class="px-4 py-2">
-                                                            {{ $tests->first()->created_at ? $tests->first()->created_at->format('d M Y, h:i A') : '' }}
-                                                        </td>
-                                                        <td class="px-4 py-2 text-center">
-                                                            <a href="{{ route('diagnosis-tests.pdf', ['groupTestNo' => $group_no]) }}"
-                                                                target="_blank"
-                                                                class="px-3 py-1 bg-green-100 text-green-800 rounded inline-flex items-center mr-2">
-                                                                <i class="fas fa-file-pdf mr-1"></i> PDF
-                                                            </a>
-                                                            <button class="px-3 py-1 bg-blue-100 text-blue-800 rounded"
-                                                                onclick="previewDiagnosisTestAll('{{ $group_no }}')">
-                                                                <i class="fas fa-eye"></i> Preview
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="5" class="text-center py-4 text-gray-400">No
-                                                            diagnosis tests found.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @else
-                                    <div class="text-center py-8 text-gray-500">
-                                        <i class="fas fa-vials text-4xl text-gray-300 mb-4"></i>
-                                        <p>No diagnosis tests found.</p>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-
-                        <!-- Diagnosis Test Preview Modal -->
-                        <div id="diagnosisTestPreviewModal"
-                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                            <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[95vh] flex flex-col">
-                                <!-- Modal Header -->
-                                <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                                    <h2 class="text-xl font-semibold text-gray-800 flex items-center">
-                                        <i class="fas fa-vials mr-2 text-pink-600"></i>
-                                        Diagnosis Test Details
-                                    </h2>
-                                    <div class="flex items-center space-x-4">
-                                        <a id="diagnosisPdfBtn" href="#" target="_blank"
-                                            class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700 transition-colors">
-                                            <i class="fas fa-file-pdf mr-2"></i> Download PDF
-                                        </a>
-                                        <button type="button" aria-label="Close"
-                                            class="text-gray-400 hover:text-gray-600 text-2xl"
-                                            onclick="closeDiagnosisTestPreviewModal()">
-                                            &times;
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <div class="overflow-y-auto flex-1 p-6">
-                                    <!-- Clinic/Doctor Info -->
-                                    <div class="flex flex-wrap justify-between items-center mb-6">
-                                        <div class="mb-4 md:mb-0">
-                                            <img src="{{ asset('img/site-logo.png') }}" alt="Logo"
-                                                class="h-12 mb-2">
-                                            <div class="text-sm font-semibold text-gray-700">
-                                                {{ setting('hospital_name') }}</div>
-                                            <div class="text-xs text-gray-500">
-                                                <i class="fas fa-map-marker-alt mr-1"></i>
-                                                {{ setting('address') }}
-                                            </div>
-                                            <div class="text-xs text-gray-500">
-                                                <i class="fas fa-phone-alt mr-1"></i> +91 {{ setting('phone') }} |
-                                                <i class="fas fa-globe ml-1 mr-1"></i> {{ setting('website') }}
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-xs text-gray-500">Generated Date:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewCreatedOn">--
-                                            </div>
-                                            <div class="text-xs text-gray-500 mt-2">Date:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewTestDate">--
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-4 border-gray-200">
-
-                                    <!-- Patient & OPD Info -->
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <div class="text-xs text-gray-500">OPD No:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewOpdNo">--</div>
-                                        </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <div class="text-xs text-gray-500">Patient Name:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewPatientName">--
-                                            </div>
-                                        </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <div class="text-xs text-gray-500">Doctor:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewDoctorName">--
-                                            </div>
-                                        </div>
-
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <div class="text-xs text-gray-500">UHID:</div>
-                                            <div class="font-semibold text-gray-800" id="diagnosisPreviewUhid">--</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Test Details -->
-                                    <div class="mb-4">
-                                        <h3 class="text-md font-semibold text-gray-700 mb-2 flex items-center">
-                                            <i class="fas fa-flask mr-2 text-blue-500"></i>
-                                            Test Details
-                                        </h3>
-                                        <div class="overflow-x-auto">
-                                            <table class="min-w-full text-sm border border-gray-200">
-                                                <thead class="bg-gray-100">
-                                                    <tr>
-                                                        <th class="px-4 py-2 text-left font-medium text-gray-700 border">#
-                                                        </th>
-                                                        <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Test Name</th>
-                                                        {{-- <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Test Code</th> --}}
-                                                        <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Type</th>
-                                                        <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Urgency</th>
-                                                        <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Test Date</th>
-                                                        {{-- <th class="px-4 py-2 text-left font-medium text-gray-700 border">
-                                                            Price</th> --}}
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="diagnosisPreviewTestsTable" class="divide-y divide-gray-200">
-                                                    <!-- Will be populated by JavaScript -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                    <!-- Footer Notes -->
-                                    <div class="text-xs text-gray-500 mt-6 border-t pt-4">
-                                        <p class="mb-1"><i class="fas fa-info-circle mr-1"></i> This is an
-                                            electronically generated report. No signature is required.</p>
-                                        <p><i class="fas fa-clock mr-1"></i> Report generated on: <span
-                                                id="diagnosisPreviewGeneratedOn">{{ now()->format('d M Y, h:i A') }}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            function previewDiagnosisTestAll(group_no) {
-                                // Show loading state
-                                const modal = document.getElementById('diagnosisTestPreviewModal');
-                                modal.classList.remove('hidden');
-                                const tbody = document.getElementById('diagnosisPreviewTestsTable');
-                                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Loading test details...</td></tr>';
-
-                                fetch(`/admin/diagnosis-tests?opd_patient_id={{ $opd_patient->id }}&group_test_no=${group_no}`)
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Network response was not ok');
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        // Safely update elements only if they exist
-                                        const setTextIfExists = (id, text) => {
-                                            const element = document.getElementById(id);
-                                            if (element) element.textContent = text || '--';
-                                        };
-
-                                        // Basic Info
-                                        setTextIfExists('diagnosisPreviewCreatedOn', data.tests?.[0]?.created_at_formatted);
-                                        setTextIfExists('diagnosisPreviewTestDate', data.tests?.[0]?.test_date ? formatDate(data.tests[0]
-                                            .test_date) : '--');
-                                        setTextIfExists('diagnosisPreviewOpdNo', data.opd_no);
-                                        setTextIfExists('diagnosisPreviewPatientName', data.patient?.name);
-                                        setTextIfExists('diagnosisPreviewDoctorName', data.doctor?.name);
-                                        setTextIfExists('diagnosisPreviewUhid', data.uhid);
-
-                                        // Tests Table
-                                        tbody.innerHTML = '';
-
-                                        if (data.tests?.length) {
-                                            data.tests.forEach((test, index) => {
-                                                const row = document.createElement('tr');
-                                                row.className = 'hover:bg-gray-50';
-                                                row.innerHTML = `
-                        <td class="px-4 py-2 border">${index + 1}</td>
-                        <td class="px-4 py-2 border font-medium">${test.test_name?.replace(' - ', '') || '--'}</td>
-
-                        <td class="px-4 py-2 border">${test.test_type || '--'}</td>
-                        <td class="px-4 py-2 border">
-                            <span class="px-2 py-1 text-xs rounded-full ${getUrgencyClass(test.urgency)}">
-                                ${test.urgency || 'Routine'}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 border">${test.test_date ? formatDate(test.test_date) : '--'}</td>
-                      
-                    `;
-                                                tbody.appendChild(row);
-                                            });
-                                        } else {
-                                            tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-gray-400">No test details available</td>
-                    </tr>
-                `;
-                                        }
-
-                                        // Update PDF button if exists
-                                        const pdfBtn = document.getElementById('diagnosisPdfBtn');
-                                        if (pdfBtn) {
-                                            pdfBtn.href =
-                                                `/admin/diagnosis-tests/pdf/${group_no}`;
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error loading diagnosis tests:', error);
-                                        tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center py-4 text-red-500">
-                        Error loading test details: ${error.message}
-                    </td>
-                </tr>
-            `;
-                                    });
-                            }
-
-                            // Helper functions
-                            function formatDate(dateString) {
-                                if (!dateString) return '--';
-                                const date = new Date(dateString);
-                                return isNaN(date) ? dateString : date.toLocaleDateString('en-GB', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric'
-                                });
-                            }
-
-                            function getUrgencyClass(urgency) {
-                                switch (urgency) {
-                                    case 'Stat':
-                                        return 'bg-red-100 text-red-800';
-                                    case 'Urgent':
-                                        return 'bg-orange-100 text-orange-800';
-                                    default:
-                                        return 'bg-blue-100 text-blue-800';
-                                }
-                            }
-
-                            function closeDiagnosisTestPreviewModal() {
-                                document.getElementById('diagnosisTestPreviewModal').classList.add('hidden');
-                            }
-                        </script>
-
-                        <!-- Diagnosis Test Modal (Multiple Rows) -->
-                        <!-- Diagnosis Test Modal (Professional & Responsive) -->
-                        <!-- Diagnosis Test Modal -->
-                        {{-- <div id="diagnosisTestModal"
-                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                            <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
-                                <!-- Modal Header -->
-                                <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                                    <h2 id="diagnosisTestModalTitle" class="text-xl font-semibold text-gray-800">
-                                        <i class="fas fa-vials mr-2 text-pink-600"></i>
-                                        <span>Add Diagnosis Tests</span>
-                                    </h2>
-                                    <button class="text-gray-400 hover:text-gray-600 text-2xl"
-                                        onclick="closeDiagnosisTestModal()">
-                                        &times;
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <form id="diagnosisTestForm" method="POST" class="overflow-y-auto flex-1 p-6"
-                                    onsubmit="return false;">
-                                    @csrf
-                                    <input type="hidden" name="opd_patient_id" value="{{ $opd_patient->id }}">
-                                    <input type="hidden" name="patient_id" value="{{ $opd_patient->patient_id }}">
-                                    <input type="hidden" name="doctor_id" value="{{ $opd_patient->doctor_id }}">
-                                    <input type="hidden" name="opd_no" value="{{ $opd_patient->opd_no }}">
-
-                                    <div class="flex justify-between items-center mb-3">
-                                        <h3 class="text-sm font-medium text-gray-700">Diagnosis Test Items</h3>
-                                        <button type="button" id="addDiagnosisTestRow"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-                                            <i class="fas fa-plus mr-1"></i> Add Test Row
-                                        </button>
-                                    </div>
-
-                                    <!-- Table -->
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 border border-gray-200"
-                                            id="diagnosisTestRowsTable">
-                                            <thead>
-                                                <tr class="bg-gray-50">
-                                                    <th class="px-3 py-2 border">#</th>
-                                                    <th class="px-3 py-2 border">Category</th>
-                                                    <th class="px-3 py-2 border">Test Type</th>
-                                                    <th class="px-3 py-2 border">Charge</th>
-                                                    <th class="px-3 py-2 border">Urgency</th>
-                                                    <th class="px-3 py-2 border">Date</th>
-                                                    <th class="px-3 py-2 border">Instructions</th>
-                                                    <th class="px-3 py-2 border">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="diagnosisTestRowsBody" class="bg-white divide-y divide-gray-200">
-                                                <tr>
-                                                    <td class="px-3 py-2 border">1</td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="charge_category_id[]"
-                                                            class="w-full border rounded p-1 text-sm charge-category"
-                                                            required onchange="loadChargeTypes(this)">
-                                                            <option value="">Select Category</option>
-                                                            @foreach ($chargeCategories as $category)
-                                                                <option value="{{ $category->id }}">
-                                                                    {{ $category->charge_category }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="charge_type_id[]"
-                                                            class="w-full border rounded p-1 text-sm charge-type" required
-                                                            onchange="loadStandardCharge(this)">
-                                                            <option value="">Select Type</option>
-                                                            <!-- Will be populated via AJAX -->
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <input type="number" name="standard_charge[]"
-                                                            class="w-full border rounded p-1 text-sm standard-charge"
-                                                            readonly>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="urgency[]" class="w-full border rounded p-1 text-sm"
-                                                            required>
-                                                            <option value="">Select Urgency</option>
-                                                            <option value="Routine">Routine</option>
-                                                            <option value="Stat">Urgent</option>
-                                                            <option value="Urgent">Very Urgent</option>
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <input type="date" name="test_date[]"
-                                                            class="w-full border rounded p-1 text-sm" required>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <input type="text" name="special_instructions[]"
-                                                            class="w-full border rounded p-1 text-sm">
-                                                    </td>
-                                                    <td class="px-3 py-2 text-center">
-                                                        <button type="button"
-                                                            class="deleteDiagnosisTestRow text-red-500 hover:text-red-700 px-2"
-                                                            title="Delete">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- Modal Footer -->
-                                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-6">
-                                        <button type="button" onclick="closeDiagnosisTestModal()"
-                                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"
-                                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none">
-                                            Save All
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div> --}}
-
-
-                        <!-- Diagnosis Test Modal -->
-                        <div id="diagnosisTestModal"
-                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                            <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
-                                <!-- Modal Header -->
-                                <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                                    <h2 id="diagnosisTestModalTitle" class="text-xl font-semibold text-gray-800">
-                                        <i class="fas fa-vials mr-2 text-pink-600"></i>
-                                        <span>Add Diagnosis Tests</span>
-                                    </h2>
-                                    <button class="text-gray-400 hover:text-gray-600 text-2xl"
-                                        onclick="closeDiagnosisTestModal()">
-                                        &times;
-                                    </button>
-                                </div>
-
-                                <!-- Modal Body -->
-                                <form id="diagnosisTestForm" method="POST" class="overflow-y-auto flex-1 p-6"
-                                    onsubmit="return false;">
-                                    @csrf
-                                    <input type="hidden" name="opd_patient_id" value="{{ $opd_patient->id }}">
-                                    <input type="hidden" name="patient_id" value="{{ $opd_patient->patient_id }}">
-                                    <input type="hidden" name="doctor_id" value="{{ $opd_patient->doctor_id }}">
-                                    <input type="hidden" name="opd_no" value="{{ $opd_patient->opd_no }}">
-
-                                    <div class="flex justify-between items-center mb-3">
-                                        <h3 class="text-sm font-medium text-gray-700">Diagnosis Test Items</h3>
-                                        <button type="button" id="addDiagnosisTestRow"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-                                            <i class="fas fa-plus mr-1"></i> Add Test Row
-                                        </button>
-                                    </div>
-
-                                    <!-- Table -->
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 border border-gray-200"
-                                            id="diagnosisTestRowsTable">
-                                            <thead>
-                                                <tr class="bg-gray-50">
-                                                    <th class="px-3 py-2 border">#</th>
-                                                    <th class="px-3 py-2 border">Test Type</th>
-                                                    <th class="px-3 py-2 border">Category</th>
-                                                    <th class="px-3 py-2 border hidden">Charge</th>
-                                                    <th class="px-3 py-2 border">Urgency</th>
-                                                    <th class="px-3 py-2 border">Date</th>
-                                                    <th class="px-3 py-2 border">Instructions</th>
-                                                    <th class="px-3 py-2 border">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="diagnosisTestRowsBody" class="bg-white divide-y divide-gray-200">
-                                                <tr>
-                                                    <td class="px-3 py-2 border">1</td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="charge_type_id[]"
-                                                            class="w-full border rounded p-1 text-sm charge-type" required
-                                                            onchange="loadChargeCategories(this)">
-                                                            <option value="">Select Type</option>
-                                                            @foreach ($chargeTypes as $type)
-                                                                <option value="{{ $type->id }}">{{ $type->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="charge_category_id[]"
-                                                            class="w-full border rounded p-1 text-sm charge-category"
-                                                            required onchange="loadStandardCharge(this)">
-                                                            <option value="">Select Category</option>
-                                                            <!-- Will be populated via AJAX -->
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2 hidden">
-                                                        <input type="number" name="standard_charge[]"
-                                                            class="w-full border rounded p-1 text-sm standard-charge "
-                                                            readonly>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <select name="urgency[]" class="w-full border rounded p-1 text-sm"
-                                                            required>
-                                                            <option value="">Select Urgency</option>
-                                                            <option value="Routine">Routine</option>
-                                                            <option value="Stat">Urgent</option>
-                                                            <option value="Urgent">Very Urgent</option>
-                                                        </select>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <input type="date" name="test_date[]"
-                                                            class="w-full border rounded p-1 text-sm" required>
-                                                    </td>
-                                                    <td class="px-3 py-2">
-                                                        <input type="text" name="special_instructions[]"
-                                                            class="w-full border rounded p-1 text-sm">
-                                                    </td>
-                                                    <td class="px-3 py-2 text-center">
-                                                        <button type="button"
-                                                            class="deleteDiagnosisTestRow text-red-500 hover:text-red-700 px-2"
-                                                            title="Delete">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- Modal Footer -->
-                                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-6">
-                                        <button type="button" onclick="closeDiagnosisTestModal()"
-                                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"
-                                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none">
-                                            Save All
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        @include('opd.investigations-tab')
                     </div>
-
-
-
-
-
 
                     <!-- Prescriptions Tab -->
 
@@ -1436,7 +899,7 @@
                                                         class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-8">
                                                         #</th>
                                                     <th scope="col"
-                                                        class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">
+                                                        class="hidden px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">
                                                         Category</th>
                                                     <th scope="col"
                                                         class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style="min-width: 190px;">
@@ -1466,7 +929,7 @@
                                                 <tr>
                                                     <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center opd-prescription-item-number"
                                                         data-item-number="1">1</td>
-                                                    <td class="px-2 py-2 whitespace-nowrap">
+                                                    <td class="hidden px-2 py-2 whitespace-nowrap">
                                                         <select
                                                             class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-blue-500 opdCategoryId"
                                                             name="category_id[]">
@@ -1521,6 +984,7 @@
                                                             <option value="BD" selected>BD (Twice Daily)</option>
                                                             <option value="TDS">TDS (Thrice Daily)</option>
                                                             <option value="QID">QID (4 Times Daily)</option>
+                                                            <option value="Continuous Dose">Continuous Dose</option>
                                                             <option value="SOS">SOS (As Needed)</option>
                                                             <option value="STAT">STAT (Immediate Once)</option>
                                                             <option value="HS">HS (At Bedtime)</option>
@@ -1905,6 +1369,9 @@
                             content.classList.add('hidden');
                         });
                         document.getElementById(this.dataset.tab).classList.remove('hidden');
+                        if (this.dataset.tab === 'diagnosis-tests' && typeof fetchOpdInvestigations === 'function') {
+                            fetchOpdInvestigations({{ $opd_patient->id }});
+                        }
                     });
                 });
 
@@ -1918,6 +1385,9 @@
                     if (hash === 'progress-notes' || hash.startsWith('opd-pnote-detail-')) {
                         const pnBtn = document.querySelector('.tab-button[data-tab="progress-notes"]');
                         if (pnBtn) pnBtn.click();
+                    } else if (hash === 'diagnosis-tests' || hash === 'investigations') {
+                        const dtBtn = document.querySelector('.tab-button[data-tab="diagnosis-tests"]');
+                        if (dtBtn) dtBtn.click();
                     }
                 }
 
@@ -2223,293 +1693,6 @@
                 });
             </script>
 
-            <script>
-                // Open/Close Modal
-                function openDiagnosisTestModal() {
-                    document.getElementById('diagnosisTestForm').reset();
-                    document.getElementById('diagnosisTestRowsBody').innerHTML = document.getElementById('diagnosisTestRowsBody')
-                        .children[0].outerHTML;
-                    document.getElementById('diagnosisTestModal').classList.remove('hidden');
-                }
-
-                function closeDiagnosisTestModal() {
-                    document.getElementById('diagnosisTestModal').classList.add('hidden');
-                }
-
-                // Add new row
-                document.getElementById('addDiagnosisTestRow').onclick = function() {
-                    let tbody = document.getElementById('diagnosisTestRowsBody');
-                    let newRow = tbody.children[0].cloneNode(true);
-                    newRow.querySelectorAll('input, select').forEach(el => el.value = '');
-                    tbody.appendChild(newRow);
-                };
-                // Delete row
-                document.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('deleteDiagnosisTestRow')) {
-                        let tbody = document.getElementById('diagnosisTestRowsBody');
-                        if (tbody.children.length > 1) e.target.closest('tr').remove();
-                    }
-                });
-
-                // AJAX submit for multiple tests
-                document.getElementById('diagnosisTestForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    let form = this;
-                    let formData = new FormData(form);
-                    fetch("{{ route('admin.diagnosis-tests.store') }}", {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Show success message
-                                showDiagnosisSuccess('Diagnosis tests saved successfully!');
-                                setTimeout(() => location.reload(), 1200); // 1.2 sec baad reload
-                            } else if (data.errors) alert(Object.values(data.errors).join('\n'));
-                            else alert('Something went wrong!');
-                        })
-                        .catch(() => alert('Server error!'));
-                });
-
-
-                document.addEventListener('click', function(e) {
-                    if (e.target.closest('.deleteDiagnosisTestRow')) {
-                        const row = e.target.closest('tr');
-                        // Prevent deleting the last row
-                        const tbody = document.getElementById('diagnosisTestRowsBody');
-                        if (tbody.rows.length > 1) {
-                            row.remove();
-                        } else {
-                            // Optionally clear the row instead of removing
-                            row.querySelectorAll('input, select').forEach(el => el.value = '');
-                        }
-                        // Optionally update row numbers here if you show them
-                    }
-                });
-
-                function showDiagnosisSuccess(msg) {
-                    let el = document.createElement('div');
-                    el.className =
-                        "fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 text-base font-semibold";
-                    el.innerText = msg;
-                    document.body.appendChild(el);
-                    setTimeout(() => el.remove(), 1000);
-                }
-            </script>
-
-            {{-- <script>
-                // Load charge types based on selected category
-                function loadChargeTypes(selectElement) {
-                    const chargeCategoryId = selectElement.value;
-                    const chargeTypeSelect = selectElement.closest('tr').querySelector('.charge-type');
-                    const standardChargeInput = selectElement.closest('tr').querySelector('.standard-charge');
-
-                    // Reset dependent fields
-                    chargeTypeSelect.innerHTML = '<option value="">Select Type</option>';
-                    standardChargeInput.value = '';
-
-                    if (!chargeCategoryId) return;
-
-                    fetch(`/admin/get-charge-types?charge_category_id=${chargeCategoryId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(chargeType => {
-                                const option = document.createElement('option');
-                                option.value = chargeType.id;
-                                option.textContent = chargeType.name;
-                                chargeTypeSelect.appendChild(option);
-                            });
-                        });
-                }
-
-                // Load standard charge based on selected charge type
-                function loadStandardCharge(selectElement) {
-                    const chargeCategoryId = selectElement.closest('tr').querySelector('.charge-category').value;
-                    const chargeTypeId = selectElement.value;
-                    const standardChargeInput = selectElement.closest('tr').querySelector('.standard-charge');
-
-                    if (!chargeCategoryId || !chargeTypeId) {
-                        standardChargeInput.value = '';
-                        return;
-                    }
-
-                    fetch(`/admin/get-standard-charge?charge_category_id=${chargeCategoryId}&charge_type_id=${chargeTypeId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            standardChargeInput.value = data.standard_charge || '';
-                        });
-                }
-
-                // Update the add row function to clone with proper event handlers
-                document.getElementById('addDiagnosisTestRow').onclick = function() {
-                    let tbody = document.getElementById('diagnosisTestRowsBody');
-                    let newRow = tbody.children[0].cloneNode(true);
-
-                    // Clear all values in the new row
-                    newRow.querySelectorAll('select').forEach(el => {
-                        el.selectedIndex = 0;
-                        // Reattach event handlers
-                        if (el.classList.contains('charge-category')) {
-                            el.onchange = function() {
-                                loadChargeTypes(this);
-                            };
-                        } else if (el.classList.contains('charge-type')) {
-                            el.onchange = function() {
-                                loadStandardCharge(this);
-                            };
-                        }
-                    });
-                    newRow.querySelectorAll('input').forEach(el => el.value = '');
-
-                    tbody.appendChild(newRow);
-                }; --}}
-
-
-
-            {{-- </script> --}}
-
-            <script>
-                // Load charge categories based on selected test type
-                function loadChargeCategories(selectElement) {
-                    const chargeTypeId = selectElement.value;
-                    const chargeCategorySelect = selectElement.closest('tr').querySelector('.charge-category');
-                    const standardChargeInput = selectElement.closest('tr').querySelector('.standard-charge');
-
-                    // Reset dependent fields
-                    chargeCategorySelect.innerHTML = '<option value="">Select Category</option>';
-                    standardChargeInput.value = '';
-
-                    if (!chargeTypeId) return;
-
-                    fetch(`/admin/get-charge-categories?charge_type_id=${chargeTypeId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(category => {
-                                const option = document.createElement('option');
-                                option.value = category.id;
-                                option.textContent = category.charge_category;
-                                chargeCategorySelect.appendChild(option);
-                            });
-                        });
-                }
-
-                // Load standard charge based on selected charge category
-                function loadStandardCharge(selectElement) {
-                    const chargeCategoryId = selectElement.value;
-                    const chargeTypeSelect = selectElement.closest('tr').querySelector('.charge-type');
-                    const chargeTypeId = chargeTypeSelect.value;
-                    const standardChargeInput = selectElement.closest('tr').querySelector('.standard-charge');
-
-                    if (!chargeCategoryId || !chargeTypeId) {
-                        standardChargeInput.value = '';
-                        return;
-                    }
-
-                    fetch(`/admin/get-standard-charge?charge_category_id=${chargeCategoryId}&charge_type_id=${chargeTypeId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            standardChargeInput.value = data.standard_charge || '';
-                        });
-                }
-
-                // Add new row with proper event handlers
-                document.getElementById('addDiagnosisTestRow').onclick = function() {
-                    let tbody = document.getElementById('diagnosisTestRowsBody');
-                    let newRow = tbody.children[0].cloneNode(true);
-
-                    // Clear all values in the new row
-                    newRow.querySelectorAll('select').forEach(el => {
-                        el.selectedIndex = 0;
-                        // Reattach event handlers
-                        if (el.classList.contains('charge-type')) {
-                            el.onchange = function() {
-                                loadChargeCategories(this);
-                            };
-                        } else if (el.classList.contains('charge-category')) {
-                            el.onchange = function() {
-                                loadStandardCharge(this);
-                            };
-                        }
-                    });
-                    newRow.querySelectorAll('input').forEach(el => el.value = '');
-
-                    // Update row number
-                    newRow.querySelector('td:first-child').textContent = tbody.children.length + 1;
-
-                    tbody.appendChild(newRow);
-                };
-
-                // Delete row handler
-                document.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('deleteDiagnosisTestRow')) {
-                        const tbody = document.getElementById('diagnosisTestRowsBody');
-                        if (tbody.children.length > 1) {
-                            e.target.closest('tr').remove();
-                            // Update row numbers after deletion
-                            Array.from(tbody.children).forEach((row, index) => {
-                                row.querySelector('td:first-child').textContent = index + 1;
-                            });
-                        }
-                    }
-                });
-
-                // Form submission
-                // document.getElementById('diagnosisTestForm').addEventListener('submit', function(e) {
-                //     e.preventDefault();
-                //     let form = this;
-                //     let formData = new FormData(form);
-
-                //     fetch("{{ route('admin.diagnosis-tests.store') }}", {
-                //             method: 'POST',
-                //             headers: {
-                //                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                //                 'Accept': 'application/json'
-                //             },
-                //             body: formData
-                //         })
-                //         .then(response => response.json())
-                //         .then(data => {
-                //             if (data.success) {
-                //                 showDiagnosisSuccess('Diagnosis tests saved successfully!');
-                //                 setTimeout(() => location.reload(), 1200);
-                //             } else if (data.errors) {
-                //                 alert(Object.values(data.errors).join('\n'));
-                //             } else {
-                //                 alert('Something went wrong!');
-                //             }
-                //         })
-                //         .catch(error => {
-                //             console.error('Error:', error);
-                //             alert('Server error occurred!');
-                //         });
-                // });
-
-                function showDiagnosisSuccess(msg) {
-                    let el = document.createElement('div');
-                    el.className =
-                        "fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 text-base font-semibold";
-                    el.innerText = msg;
-                    document.body.appendChild(el);
-                    setTimeout(() => el.remove(), 1000);
-                }
-
-                // Modal open/close functions
-                function openDiagnosisTestModal() {
-                    document.getElementById('diagnosisTestForm').reset();
-                    document.getElementById('diagnosisTestRowsBody').innerHTML = document.getElementById('diagnosisTestRowsBody')
-                        .children[0].outerHTML;
-                    document.getElementById('diagnosisTestModal').classList.remove('hidden');
-                }
-
-                function closeDiagnosisTestModal() {
-                    document.getElementById('diagnosisTestModal').classList.add('hidden');
-                }
-            </script>
-
             <style>
                 .tab-button {
                     transition: all 0.2s ease;
@@ -2673,7 +1856,7 @@
 
                                     row.innerHTML = `
                                         <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center opd-prescription-item-number" data-item-number="${idx+1}">${idx+1}</td>
-                                        <td class="px-2 py-2 whitespace-nowrap">
+                                        <td class="hidden px-2 py-2 whitespace-nowrap">
                                             <select class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-blue-500 opdCategoryId" name="category_id[]">
                                                 <option value="">All</option>
                                                 @foreach ($medicine_categories as $cat)
@@ -2723,6 +1906,7 @@
                                                 <option value="BD">BD (Twice Daily)</option>
                                                 <option value="TDS">TDS (Thrice Daily)</option>
                                                 <option value="QID">QID (4 Times Daily)</option>
+                                                 <option value="Continuous Dose">Continuous Dose</option>
                                                 <option value="SOS">SOS (As Needed)</option>
                                                 <option value="STAT">STAT (Immediate Once)</option>
                                                 <option value="HS">HS (At Bedtime)</option>
@@ -2758,7 +1942,7 @@
 
                                     if (med.category_id) {
                                         row.querySelector('.opdCategoryId').value = med.category_id;
-                                        filterRowDatalist(row, med.category_id);
+                                        // filterRowDatalist(row, med.category_id);
                                     }
 
                                     let routeSel = row.querySelector('.routeInput');

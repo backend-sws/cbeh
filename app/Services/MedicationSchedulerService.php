@@ -56,6 +56,11 @@ class MedicationSchedulerService
             case 'EVERY 8 HOURS':
                 return ['06:00', '14:00', '22:00'];
 
+            case 'CONTINUOUS':
+            case 'CONTINUOUS DOSE':
+            case 'CONTINUOUS INFUSION':
+                return ['08:00', '14:00', '20:00'];
+
             case 'HS':
             case 'BEDTIME':
             case 'AT BEDTIME':
@@ -71,6 +76,7 @@ class MedicationSchedulerService
 
             default:
                 // If contains BD, TDS, etc. inside text
+                if (str_contains($f, 'CONTINUOUS')) return ['08:00', '14:00', '20:00'];
                 if (str_contains($f, 'BD') || str_contains($f, 'BID')) return ['09:00', '21:00'];
                 if (str_contains($f, 'TDS') || str_contains($f, 'TID')) return ['08:00', '14:00', '20:00'];
                 if (str_contains($f, 'QID')) return ['06:00', '12:00', '18:00', '22:00'];
@@ -107,7 +113,7 @@ class MedicationSchedulerService
         if (empty($duration)) return 7;
 
         $d = strtolower(trim($duration));
-        if (str_contains($d, 'ongoing') || str_contains($d, 'continue')) {
+        if (str_contains($d, 'ongoing') || str_contains($d, 'continue') || str_contains($d, 'continuous')) {
             return 7; // generate for 7 days ahead
         }
 

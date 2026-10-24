@@ -489,6 +489,13 @@ class OpdPatientController extends Controller
             ->orderByDesc('recorded_at')
             ->get();
 
+        // Load OPD diagnostic investigations and available doctors
+        $investigations = \App\Models\OpdInvestigation::where('opd_patient_id', $opd_patient->id)
+            ->with(['doctor', 'orderedBy'])
+            ->orderBy('id', 'desc')
+            ->get();
+        $doctors = \App\Models\User::role('Doctor')->select('id', 'name', 'email')->get();
+
         return view('opd.opdpatient-details', compact(
             'opd_patient',
             'appointments',
@@ -504,7 +511,9 @@ class OpdPatientController extends Controller
             'pathology_bills',
             'pharmacy_bills',
             'progress_notes',
-            'vitals_history'
+            'vitals_history',
+            'investigations',
+            'doctors'
         ));
     }
 

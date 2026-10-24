@@ -78,4 +78,12 @@ class OpdPatient extends Model
     {
         return $this->hasMany(\App\Models\PatientVital::class, 'opd_patient_id');
     }
+
+    /**
+     * Diagnostic investigations prescribed during this OPD visit.
+     */
+    public function investigations()
+    {
+        return $this->hasMany(\App\Models\OpdInvestigation::class, 'opd_patient_id')->orderByDesc('id');
+    }
 }

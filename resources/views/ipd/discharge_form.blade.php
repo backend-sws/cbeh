@@ -315,21 +315,6 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr class="inv-row">
-                                        <td class="p-2">
-                                            <input type="text" name="inv_name[]" value="Chest X-Ray / ECG"
-                                                placeholder="Investigation / Date" class="w-full border-gray-300 rounded p-1.5 text-xs border">
-                                        </td>
-                                        <td class="p-2">
-                                            <input type="text" name="inv_result[]" value="NSR, No acute ischemic changes"
-                                                placeholder="Findings / Results" class="w-full border-gray-300 rounded p-1.5 text-xs border">
-                                        </td>
-                                        <td class="p-2 text-center">
-                                            <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700 p-1">
-                                                <i class="ph ph-trash text-base"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
                                 @endif
                             </tbody>
                         </table>

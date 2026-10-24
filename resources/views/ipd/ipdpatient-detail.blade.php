@@ -62,7 +62,7 @@
 
                 {{-- Tab Menu --}}
                 <ul class="flex flex-wrap space-x-6 border-b mb-4" id="tabs">
-                    @php $tabs = ['overview' => 'Overview', 'vitals' => 'Vitals Chart', 'medication_chart' => 'Ongoing Medication (MAR)', 'progress_notes' => 'Progress Notes', 'diagnosis' => 'Lab Uploads', 'investigations' => 'Diagnosis Investigation', 'charges' => 'Bill Entry', 'prescriptions' => 'Prescriptions',  'payments' => 'Payments Receive', 'bills' => 'Bill Details']; @endphp
+                    @php $tabs = ['overview' => 'Overview', 'vitals' => 'Vitals Chart', 'medication_chart' => 'Ongoing Medication (MAR)', 'progress_notes' => 'Progress Notes', 'diagnosis' => 'Lab Uploads', 'investigations' => 'Investigation', 'charges' => 'Bill Entry', 'prescriptions' => 'Prescriptions',  'payments' => 'Payments Receive', 'bills' => 'Bill Details']; @endphp
                     @foreach ($tabs as $key => $label)
                         <li class="tab-item pb-2 border-b-2 cursor-pointer hover:border-blue-500 text-gray-700"
                             data-tab="{{ $key }}" id="tab-{{ $key }}">
@@ -546,7 +546,7 @@
                                             class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-8">
                                             #</th>
                                         <th scope="col"
-                                            class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">
+                                            class="hidden px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">
                                             Category</th>
                                         <th scope="col"
                                             class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style="min-width: 190px;">
@@ -576,11 +576,11 @@
                                     <tr>
                                         <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center ipd-prescription-item-number"
                                             data-item-number="1">1</td>
-                                        <td class="px-2 py-2 whitespace-nowrap">
+                                        <td class="hidden px-2 py-2 whitespace-nowrap">
                                             <select
                                                 class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-blue-500 ipdCategoryId"
                                                 name="category_id[]">
-                                                <option value="">All</option>
+                                                <option value="" selected>All</option>
                                                 @if(isset($medicine_categories))
                                                     @foreach ($medicine_categories as $cat)
                                                         <option value="{{ $cat->id }}">
@@ -633,6 +633,7 @@
                                                 <option value="BD" selected>BD (Twice Daily)</option>
                                                 <option value="TDS">TDS (Thrice Daily)</option>
                                                 <option value="QID">QID (4 Times Daily)</option>
+                                                <option value="Continuous Dose">Continuous Dose</option>
                                                 <option value="SOS">SOS (As Needed)</option>
                                                 <option value="STAT">STAT (Immediate Once)</option>
                                                 <option value="HS">HS (At Bedtime)</option>
@@ -969,7 +970,7 @@
                     });
                 }
 
-                // Diagnosis Investigation Tab Handler
+                // Investigation Tab Handler
                 const tabInv = document.getElementById('tab-investigations');
                 if (tabInv) {
                     tabInv.addEventListener('click', function() {
@@ -1338,9 +1339,9 @@
 
                                     row.innerHTML = `
                                         <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center ipd-prescription-item-number" data-item-number="${idx+1}">${idx+1}</td>
-                                        <td class="px-2 py-2 whitespace-nowrap">
+                                        <td class="hidden px-2 py-2 whitespace-nowrap">
                                             <select class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-blue-500 ipdCategoryId" name="category_id[]">
-                                                <option value="">All</option>
+                                                <option value="" selected>All</option>
                                                 @if(isset($medicine_categories))
                                                     @foreach ($medicine_categories as $cat)
                                                         <option value="{{ $cat->id }}">{{ $cat->medicine_category }}</option>
@@ -1390,6 +1391,7 @@
                                                 <option value="BD">BD (Twice Daily)</option>
                                                 <option value="TDS">TDS (Thrice Daily)</option>
                                                 <option value="QID">QID (4 Times Daily)</option>
+                                                <option value="Continuous Dose">Continuous Dose</option>
                                                 <option value="SOS">SOS (As Needed)</option>
                                                 <option value="STAT">STAT (Immediate Once)</option>
                                                 <option value="HS">HS (At Bedtime)</option>
@@ -1425,7 +1427,6 @@
 
                                     if (med.category_id) {
                                         row.querySelector('.ipdCategoryId').value = med.category_id;
-                                        filterRowDatalist(row, med.category_id);
                                     }
                                     let rEl = row.querySelector('.routeInput');
                                     if (rEl && routeVal) rEl.value = routeVal;

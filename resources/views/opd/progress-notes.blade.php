@@ -285,7 +285,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-8">#</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Category</th>
+                                <th scope="col" class="hidden px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Category</th>
                                 <th scope="col" class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style="min-width: 190px;">Medicine Name</th>
                                 <th scope="col" class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Dose</th>
                                 <th scope="col" class="px-2 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">Route</th>
@@ -298,7 +298,7 @@
                         <tbody id="opdPnMedicineTableBody" class="bg-white divide-y divide-gray-200">
                             <tr>
                                 <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center opd-pn-row-number" data-item-number="1">1</td>
-                                <td class="px-2 py-2 whitespace-nowrap">
+                                <td class="hidden px-2 py-2 whitespace-nowrap">
                                     <select name="category_id[]" class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-pink-500 opd-pn-cat-select" onchange="filterOpdPnMedicineRow(this)">
                                         <option value="">All</option>
                                         @if(isset($medicine_categories))
@@ -600,7 +600,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 text-center opd-pn-row-number" data-item-number="${currentCount}">${currentCount}</td>
-            <td class="px-2 py-2 whitespace-nowrap">
+            <td class="hidden px-2 py-2 whitespace-nowrap">
                 <select name="category_id[]" class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-pink-500 opd-pn-cat-select" onchange="filterOpdPnMedicineRow(this)">
                     ${catOptions}
                 </select>
